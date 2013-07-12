@@ -3,6 +3,10 @@ Spear
 
 A simple yet comprehensive and versatile PEG (Parsing Expression Grammar) library for C++.
 
+Latest stable release: N/A
+
+Latest release: 0.1.0-alpha
+
 Documentation
 =============
 
