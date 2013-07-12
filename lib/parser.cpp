@@ -13,7 +13,35 @@ void Parser::addRule(Rule r)
 	//XXX Again, we might change this...
 }
 
-void Parser::parse(string text)
+stack<int> callstack;
+
+int evalExpr(string expression, string text) //ret 1=error
+{
+	if(expression.at(0) == '%')
+	{
+		string strlit = text.substr(index,
+			expression.len() - 1);
+		//add to structure
+	}
+	else if(expressions.at(0) == '$')
+	{
+		//try to match regex
+	}
+	else if(expressions.at(0) == '|')
+	{
+		string[] options = expression.substr(index + 2).split();
+		// for each in options: call evalExpr(options[i])
+		// if 1 go on to next- if all done throw error
+	}
+	else
+	{
+		// if doesn't exist
+		callStack.push(i);
+		//call parse() with substring i as parameter
+	}
+}
+
+void Parser::parse(string text, Rule rule)
 {
 	//This is where all the fun is...
 	/* Planning it all out...
@@ -43,25 +71,9 @@ void Parser::parse(string text)
 			try to parse proper number of times
 			failed? throw error		
 	*/
-	stack<int> callStack;
-	for(int i = 0; i < baseRule.getExpressions().size(); i++)
+	int index = 0;
+	for(int i = 0; i < rule.getExpressions().size(); i++)
 	{
-		if(baseRule.getExpressions().at(i).at(0) == '%')
-		{
-			//Parse as string literal
-		}
-		else if(baseRule.getExpressions().at(i).at(0) == '$')
-		{
-			//Parse as regex
-		}
-		else if(baserule.getExpressions().at(i).at(0) == '(')
-		{
-			//Parse as OR expression
-		}
-		else
-		{
-			callStack.push(i);
-			//call parse() with substring i as parameter
-		}
+		evalExpr(rule.getExpressions.at(i), text.substr(index));
 	}
 }
