@@ -13,31 +13,44 @@ void Parser::addRule(Rule r)
 	//XXX Again, we might change this...
 }
 
-stack<int> callstack;
-
-int evalExpr(string expression, string text) //ret 1=error
+int evalExpr(string expression, string text, int index)
 {
 	if(expression.at(0) == '%')
 	{
 		string strlit = text.substr(index,
 			expression.len() - 1);
-		//add to structure
+		if(strlit != expression.substr(1))
+			throw ParseError("Failed to match string literal "
+			+ expression.substr(1));
 	}
-	else if(expressions.at(0) == '$')
+	else if(expression.at(0) == '$')
 	{
 		//try to match regex
 	}
-	else if(expressions.at(0) == '|')
+	else if(expression.at(0) == '|')
 	{
-		string[] options = expression.substr(index + 2).split();
-		// for each in options: call evalExpr(options[i])
-		// if 1 go on to next- if all done throw error
+		string[] options = expression.substr(2).split();
+		//TODO: syntax for FOR loop here
+		{
+			try
+			{
+				evalExpr(options[i], text, index);
+				return;
+			}
+			catch(Parse Error e)
+			{
+				continue;
+			}
+		}
+		throw ParseError("Failed to match one of valid expressions.");
+	}
+	else if(expression.substr(0,5).lower == "maybe")
+	{
+		string rule = expression.substr(6);
 	}
 	else
 	{
-		// if doesn't exist
-		callStack.push(i);
-		//call parse() with substring i as parameter
+		//call Parser::parse
 	}
 }
 
@@ -48,10 +61,10 @@ void Parser::parse(string text, Rule rule)
 	Create stack - Done
 	For each expression in baseRule: - Done
 		starts with $?
-			parse regex - failed? throw error
+			parse regex - failed? throw error - Done
 			add to current structure
 		starts with %?
-			parse string litera - failed? throw error
+			parse string literal - failed? throw error
 			add to current structure
 		labeled?
 			add name to current structure
@@ -72,7 +85,8 @@ void Parser::parse(string text, Rule rule)
 			failed? throw error		
 	*/
 	int index = 0;
-	for(int i = 0; i < rule.getExpressions().size(); i++)
+	size = rule.getExpressions().size();
+	for(int i = 0; i < size; i++)
 	{
 		evalExpr(rule.getExpressions.at(i), text.substr(index));
 	}
