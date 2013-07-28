@@ -15,7 +15,7 @@ API
 #include "spear.hpp"
 
 Parser p = new Parser();
-p.addPattern("myOtherPattern");
+p.addRule("myOtherPattern");
 p.rule("root") >> "%string_literal" >> "$\\d\\w regex" >> "#label:%literal" >> "myOtherPattern?";
 p.rule("myOtherPattern") >> "%literal2" >> more stuff... ;
 SpearStructure s = p.parsefile("myfile.extension");
