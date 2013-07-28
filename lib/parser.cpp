@@ -91,3 +91,8 @@ void Parser::parse(string text, Rule rule)
 		evalExpr(rule.getExpressions.at(i), text.substr(index));
 	}
 }
+
+void Parser::parse(string text)
+{
+	parse(text, baseRule);
+}
