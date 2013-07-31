@@ -3,15 +3,20 @@
 
 #define MAX_ELEMENTS 64 //why would you want more than 64 child elements???
 //might lower to 32 or even 24
+//A dynamically-expanding array wouldn't be worth the effort
+
+struct SpearElement
+{
+	string name;
+	string value;
+}
 
 struct SpearStructure
 {
-	int type; //0 for text, 1 if it contains a substructure, 2 for arrays
-	char* name;
 	union Element
 	{
-		char* text;
-		struct SpearStructure* child;
+		SpearElement se;
+		SpearStructure ss;
 	} elements[MAX_ELEMENTS];
 }
 
