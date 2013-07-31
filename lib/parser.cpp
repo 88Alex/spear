@@ -15,15 +15,20 @@ void Parser::addRule(Rule r)
 	//XXX Again, we might change this...
 }
 
-int evalExpr(string expression, string text, int index)
+struct SpearElement evalExpr(string expression, string text)
 {
 	if(expression.at(0) == '%')
 	{
-		string strlit = text.substr(index,
+		string strlit = text.substr(0,
 			expression.len() - 1);
 		if(strlit != expression.substr(1))
 			throw ParseError("Failed to match string literal "
 			+ expression.substr(1));
+		SpearElement e;
+		e.name = strlit;
+		e.value = strlit;
+		e.type = 0;
+		return e;
 	}
 	else if(expression.at(0) == '$')
 	{
@@ -40,8 +45,7 @@ int evalExpr(string expression, string text, int index)
 		{
 			try
 			{
-				evalExpr(options[i], text, index);
-				return;
+				return evalExpr(options[i], text.at(index));
 			}
 			catch(ParseError e)
 			{
@@ -66,12 +70,16 @@ int evalExpr(string expression, string text, int index)
 	}
 	else
 	{
-		type = 1;
-		// list all rules
+		struct SpearElement e;
+		e.name = "###rule";
+		// a magic name indicating that the expression is actually
+		// a rule to be parsed independently;
+		e.value = expr; // the name of the rule
+		return e;
 	}
 }
 
-void Parser::parse(string text, Rule rule)
+struct SpearStructure Parser::parse(string text, Rule rule)
 {
 	//This is where all the fun is...
 	/* Planning it all out...
@@ -107,10 +115,17 @@ void Parser::parse(string text, Rule rule)
 	for(int i = 0; i < expr_count; i++)
 	{
 		
-		SpearStructure new_structure = evalExpr(
-			rule.getExpressions().at(i), text, index);
-		//add it to the main structure
+		SpearElement element = evalExpr(
+			rule.getExpressions().at(i), text.substr(index));
+		if(e.name == "###rule")
+		{
+			Rule subRule;
+			structure.elements[i].ee = parse(text.substr(index),
+				subRule);
+		}
+		else structure.elements[i].se = element;
 	}
+	return structure;
 }
 
 SpearStructure Parser::parse(string text)
