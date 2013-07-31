@@ -1,6 +1,8 @@
 #include "parser.hpp"
 #include <stack>
 
+int type = 0; //0 = normal structure; 1 = substructure
+
 void Rule::operator>>(string expression)
 {
 	expressions.append(expression);
@@ -27,6 +29,10 @@ int evalExpr(string expression, string text, int index)
 	{
 		//try to match regex
 	}
+	else if(expression.at(0) == '#')
+	{
+		//label it
+	}
 	else if(expression.at(0) == '|')
 	{
 		string[] options = expression.substr(2).split();
@@ -37,7 +43,7 @@ int evalExpr(string expression, string text, int index)
 				evalExpr(options[i], text, index);
 				return;
 			}
-			catch(Parse Error e)
+			catch(ParseError e)
 			{
 				continue;
 			}
@@ -47,10 +53,21 @@ int evalExpr(string expression, string text, int index)
 	else if(expression.substr(0,5).lower == "maybe")
 	{
 		string rule = expression.substr(6);
+		// it's supposed to have a space after the "maybe"
+		// index 6 will be after the space
+		try
+		{
+			evalExpr(rule, text, index);
+		}
+		catch(ParseError e)
+		{
+			// ignore it on purpose
+		}
 	}
 	else
 	{
-		//call Parser::parse
+		type = 1;
+		// list all rules
 	}
 }
 
@@ -85,14 +102,18 @@ void Parser::parse(string text, Rule rule)
 			failed? throw error		
 	*/
 	int index = 0;
-	size = rule.getExpressions().size();
-	for(int i = 0; i < size; i++)
+	struct SpearStructure structure;
+	expr_count = rule.getExpressions().size();
+	for(int i = 0; i < expr_count; i++)
 	{
-		evalExpr(rule.getExpressions.at(i), text.substr(index));
+		
+		SpearStructure new_structure = evalExpr(
+			rule.getExpressions().at(i), text, index);
+		//add it to the main structure
 	}
 }
 
-void Parser::parse(string text)
+SpearStructure Parser::parse(string text)
 {
-	parse(text, baseRule);
+	return parse(text, baseRule);
 }

@@ -6,7 +6,7 @@
 
 struct SpearStructure
 {
-	int type; //0 for text, 1 if it contains a substructure, 2 for arrays
+	int type; //0 for text, 1 if it contains a substructure
 	char* name;
 	union Element
 	{
